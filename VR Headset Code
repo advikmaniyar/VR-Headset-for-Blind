@@ -1,0 +1,485 @@
+float height=2.3; //Average height of 5 feet 6 inches multiplied by square root of 2 and converted to meters
+
+int trigPinFront=12; //Sensor facing towards the front has trigger pin connected to pin 12 of arduino int echoPinFront=11; //Sensor facing towards the front has echo pin connected to pin 11 of arduino int trigPinBottom=10; //Sensor facing towards the bottom has trigger pin connected to pin 10 of arduino int echoPinBottom=9; //Sensor facing towards the bottom has echo pin connected to pin 9 of arduino int trigPinRight=8; //Sensor facing towards the right has trigger pin connected to pin 8 of arduino
+int echoPinRight=7; //Sensor facing towards the right has echo pin connected to pin 7 of arduino int trigPinLeft=6; //Sensor facing towards the left has trigger pin connected to pin 6 of arduino int echoPinLeft=5; //Sensor facing towards the left has echo pin connected to pin 5 of arduino
+float pulseTimeFront; //Time taken by the sound wave to reach echo pin from trigger pin for sensor facing towards the front float pulseTimeBottom; //Time taken by the sound wave to reach echo pin from trigger pin for sensor facing towards the bottom float pulseTimeRight; //Time taken by the sound wave to reach echo pin from trigger pin for sensor facing towards the right
+float pulseTimeLeft; //Time taken by the sound wave to reach echo pin from trigger pin for sensor facing towards the left
+float obstacleDistanceFront; //Distance of the obstacle from the sensor facing towards the front float obstacleDistanceBottom; //Distance of the obstacle from the sensor facing towards the bottom float obstacleDistanceRight; //Distance of the obstacle from the sensor facing towards the right float obstacleDistanceLeft; //Distance of the obstacle from the sensor facing towards the left
+float speedOfSound=347; //Speed of sound in air at 27 degree celsius in m/s
+
+int buzzerLeftUp=A0; //Buzzer on top left corner is connected to pin A0 of arduino
+int buzzerLeftDown=A1; //Buzzer on left bottom corner is connected to pin A1 of arduino int buzzerRightUp=A2; //Buzzer on top right corner is connected to pin A2 of Arduino
+15
+int buzzerRightDown=A3; //Buzzer on right bottom corner is connected to pin A3 of arduino
+
+int crowdModeButton=4; //Button to give access to user to switch off sensors while in crowd int talkModeButton=3; //Button to give access to user to switch off sensors while talking
+void setup() {
+Serial.begin(9600); //Turn on Serail Port
+pinMode(trigPinFront, OUTPUT); //Sensor facing towards the front has trigger pin as output pinMode(echoPinFront, INPUT); //Sensor facing towards the front has echo pin as input pinMode(trigPinBottom, OUTPUT); //Sensor facing towards the bottom has trigger pin as output pinMode(echoPinBottom, INPUT); //Sensor facing towards the bottom has echo pin as input pinMode(trigPinRight, OUTPUT); //Sensor facing towards the right has trigger pin as output pinMode(echoPinRight, INPUT); //Sensor facing towards the right has echo pin as input pinMode(trigPinLeft, OUTPUT); //Sensor facing towards the left has trigger pin as output pinMode(echoPinLeft, INPUT); //Sensor facing towards the left has echo pin as input pinMode(crowdModeButton, INPUT); //The switch of crowd mode is connected as input pinMode(talkModeButton, INPUT); // The switch of talk mode is connected as input pinMode(buzzerLeftUp, OUTPUT); //Buzzer on top left corner gives output pinMode(buzzerLeftDown, OUTPUT); //Buzzer on left bottom corner gives output
+pinMode(buzzerRightUp, OUTPUT); //Buzzer on top right corner gives output pinMode(buzzerRightDown, OUTPUT); //Buzzer on right bottom corner gives output } void loop() {
+digitalWrite(trigPinFront, LOW); //Set trigger pin of sensor facing towards front low
+delayMicroseconds(2000); //Pause to let signal settle
+digitalWrite(trigPinFront, HIGH); //Set trigger pin of sensor facing towards front high delayMicroseconds(15); //Pause in high state
+digitalWrite(trigPinFront, LOW); //Bring trigger pin of sensor facing towards front low
+
+pulseTimeFront = pulseIn(echoPinFront, HIGH); //Measure pulseTimeFront at echo pin of sensor facing towards the fron t in microseconds pulseTimeFront = pulseTimeFront/1000000.0; //Converts pulseTimeFront in seconds
+
+obstacleDistanceFront = speedOfSound * pulseTimeFront; //Calculates distance of obstacle from sensor facing towards the front in metres
+
+obstacleDistanceFront = obstacleDistanceFront/2.0; //Accounts for round trip of pulse to obstacle
+
+Serial.print("The distance of obstacle in front is: "); Serial.print(obstacleDistanceFront); Serial.println("metres");
+16
+delay(1000);
+
+digitalWrite(trigPinBottom, LOW); //Set trigger pin of sensor facing towards bottom low delayMicroseconds(2000); //Pause to let signal settle
+digitalWrite(trigPinBottom, HIGH); //Set trigger pin of sensor facing towards bottom high delayMicroseconds(15); //Pause in high state
+
+digitalWrite(trigPinBottom, LOW); //Bring trigger pin of sensor facing towards bottom low
+
+pulseTimeBottom = pulseIn(echoPinBottom, HIGH); //Measure pulseTimeBottom at echo pin of sensor facing towards the bottom in microseconds
+
+pulseTimeBottom = pulseTimeBottom/1000000.0; //Converts pulseTimeBottom in seconds
+
+obstacleDistanceBottom = speedOfSound * pulseTimeBottom; //Calculates distance of obstacle from sensor facing towards the bot tom in metres
+
+obstacleDistanceBottom = obstacleDistanceBottom/2.0; //Accounts for round trip of pulse to obstacle
+
+Serial.print("The distance of obstacle at bottom is: "); Serial.print(obstacleDistanceBottom); Serial.println("metres");
+delay(1000);
+
+digitalWrite(trigPinRight, LOW); //Set trigger pin of sensor facing towards right low delayMicroseconds(2000); //Pause to let signal settle
+digitalWrite(trigPinRight, HIGH); //Set trigger pin of sensor facing towards right high delayMicroseconds(15); //Pause in high state
+
+digitalWrite(trigPinRight, LOW); //Bring trigger pin of sensor facing towards right low
+
+pulseTimeRight = pulseIn(echoPinRight, HIGH); //Measure pulseTimeRight at echo pin of sensor facing towards the right in micr oseconds pulseTimeRight = pulseTimeRight/1000000.0; //Converts pulseTimeRight in seconds
+
+obstacleDistanceRight = speedOfSound * pulseTimeRight; //Calculates distance of obstacle from sensor facing towards the right in metres obstacleDistanceRight = obstacleDistanceRight/2.0; // Accounts for round trip of pulse to obstacle
+
+Serial.print("The distance of obstacle at right is: "); Serial.print(obstacleDistanceRight); Serial.println("metres");
+delay(1000);
+
+digitalWrite(trigPinLeft, LOW); //Set trigger pin of sensor facing towards left low delayMicroseconds(2000); //Pause to let signal settle
+17
+digitalWrite(trigPinLeft, HIGH); //Set trigger pin of sensor facing towards left high delayMicroseconds(15); //Pause in high state
+
+digitalWrite(trigPinLeft, LOW); //Bring trigger pin of sensor facing towards left low
+
+pulseTimeLeft = pulseIn(echoPinLeft, HIGH); //Measure pulseTimeLeft at echo pin of sensor facing towards the left in microsec onds pulseTimeLeft = pulseTimeLeft/1000000.0; //Converts pulseTimeLeft in seconds
+
+obstacleDistanceLeft = speedOfSound * pulseTimeLeft; //Calculates distance of obstacle from sensor facing towards the left in metres obstacleDistanceLeft = obstacleDistanceLeft/2.0; //Accounts for round trip of pulse to obstacle
+
+Serial.print("The distance of obstacle at left is: "); Serial.print(obstacleDistanceLeft); Serial.println("metres");
+
+
+delay(1000);
+
+if(digitalRead(crowdModeButton)==0 & digitalRead(talkModeButton)==0) {
+//The code below is activated only when crowdModeButton and talkModeButton are both grounded or their value is zero if((obstacleDistanceFront>0 & obstacleDistanceFront<4) & (obstacleDistanceBottom==height || obstacleDistanceBottom>(height+0.2))
+
+& obstacleDistanceRight>0.5 & obstacleDistanceLeft>0.5) { if(obstacleDistanceFront>=2 & obstacleDistanceFront<4) {
+
+//The code below is activated only when obstacleDistanceFront is greater than or equal to 2 m but less than 4 m analogWrite(buzzerRightUp, 51); //Gives 1 V output to buzzer at top right corner analogWrite(buzzerLeftUp, 51); //Gives 1 V output to buzzer at top left corner
+delay(1000); //Keeps the output voltage to the buzzers at 1 V for 1 s
+
+analogWrite(buzzerRightUp, 0); //Gives 0 V output to buzzer at top right corner analogWrite(buzzerLeftUp, 0); //Gives 0 V output to buzzer at top left corner delay(1000); //Keeps the output voltage to the buzzers at 0 V for 1 s
+
+}
+if(obstacleDistanceFront>=1 & obstacleDistanceFront<2) {
+
+//The code below is activated only when obstacleDistanceFront is greater than or equal to 1 m but less than 2 m analogWrite(buzzerRightUp, 77); //Gives 1.51 V output to buzzer at top right corner analogWrite(buzzerLeftUp, 77); //Gives 1.51 V output to buzzer at top left corner
+delay(750); //Keeps the output voltage to the buzzers at 1.51 V for 0.75 s
+
+18
+analogWrite(buzzerRightUp, 0); //Gives 0 V output to buzzer at top right corner analogWrite(buzzerLeftUp, 0); //Gives 0 V output to buzzer at top left corner delay(750); //Keeps the output voltage to the buzzers at 0 V for 0.75 s
+
+}
+if(obstacleDistanceFront>=0.5 & obstacleDistanceFront<1) {
+
+//The code below is activated only when obstacleDistanceFront is greater than or equal to 0.5 m but less than 1 m analogWrite(buzzerRightUp, 102); //Gives 2 V output to buzzer at top right corner analogWrite(buzzerLeftUp, 102); //Gives 2 V output to buzzer at top left corner
+
+delay(500); //Keeps the output voltage to the buzzers at 2 V for 0.5 s analogWrite(buzzerRightUp, 0); //Gives 0 V output to buzzer at top right corner analogWrite(buzzerLeftUp, 0); //Gives 0 V output to buzzer at top left corner delay(500); //Keeps the output voltage to the buzzers at 0 V for 0.5 s
+
+}
+if(obstacleDistanceFront>=0.25 & obstacleDistanceFront<0.5) {
+//The code below is activated only when obstacleDistanceFront is greater than or equal to 0.25 m but less than 0.5 m analogWrite(buzzerRightUp, 153); //Gives 3 V output to buzzer at top right corner analogWrite(buzzerLeftUp, 153); //Gives 3 V output to buzzer at top left corner
+delay(250); //Keeps the output voltage to the buzzers at 3 V for 0.25 s
+
+analogWrite(buzzerRightUp, 0); //Gives 0 V output to buzzer at top right corner analogWrite(buzzerLeftUp, 0); //Gives 0 V output to buzzer at top left corner delay(250); //Keeps the output voltage to the buzzers at 0 V for 0.25 s
+
+}
+if(obstacleDistanceFront>=0.125 & obstacleDistanceFront<0.25) {
+
+//The code below is activated only when obstacleDistanceFront is greater than or equal to 0.125 m but less than 0.25 m analogWrite(buzzerRightUp, 179); //Gives 3.51 V output to buzzer at top right corner
+analogWrite(buzzerLeftUp, 179); //Gives 3.51 V output to buzzer at top left corner delay(125); //Keeps the output voltage to the buzzers at 3.51 V for 0.125 s
+
+analogWrite(buzzerRightUp, 0); //Gives 0 V output to buzzer at top right corner analogWrite(buzzerLeftUp, 0); //Gives 0 V output to buzzer at top left corner delay(125); //Keeps the output voltage to the buzzers at 0 V for 0.125 s
+
+}
+if(obstacleDistanceFront>=0 & obstacleDistanceFront<0.125) {
+
+//The code below is activated only when obstacleDistanceFront is greater than or 
+19
+equal to 0.125 m but less than 0.25 m analogWrite(buzzerRightUp, 204); //Gives 4 V output to buzzer at top right corner
+analogWrite(buzzerLeftUp, 204); //Gives 4 V output to buzzer at top left corner delay(62); //Keeps the output voltage to the buzzers at 4 V for 0.062 s
+
+analogWrite(buzzerRightUp, 0); //Gives 0 V output to buzzer at top right corner analogWrite(buzzerLeftUp, 0); //Gives 0 V output to buzzer at top left corner delay(62); //Keeps the output voltage to the buzzers at 0 V for 0.062 s } }
+
+if(((obstacleDistanceBottom>0 & obstacleDistanceBottom<height) || (obstacleDistanceBottom>(height+0.1) & obstacleDistanceBottom<(height+0.2))) & obstacleDistanceFront>4 & obstacleDistanceRight>0.5 & obstacleDistanceLeft>0.5) {
+
+if(obstacleDistanceBottom<=height) {
+//The code below is activated only when obstacleDistanceBottom is less than or equal to height criteria of the user analogWrite(buzzerRightDown, 179); //Gives 3.51 V output to buzzer at right bottom corner analogWrite(buzzerLeftDown, 179); //Gives 3.51 V output to buzzer at left bottom corner
+delay(125); //Keeps the output voltage to the buzzers at 3.51 V for 0.125 s analogWrite(buzzerRightDown, 0); //Gives 0 V output to buzzer at right bottom corner analogWrite(buzzerLeftDown, 0); //Gives 0 V output to buzzer at left bottom corner delay(125); //Keeps the output voltage to the buzzers at 0 V for 0.125 s
+} if(obstacleDistanceBottom>(height+0.1)) {
+
+//The code below is activated only when obstacleDistanceBottom is less than or equal to height criteria + 0.1 m of the user analogWrite(buzzerRightDown, 204); //Gives 4 V output to buzzer at right bottom corner
+analogWrite(buzzerLeftDown, 204); //Gives 4 V output to buzzer at left bottom corner delay(62); //Keeps the output voltage to the buzzers at 4 V for 0.062 s
+
+analogWrite(buzzerRightDown, 0); //Gives 0 V output to buzzer at right bottom corner analogWrite(buzzerLeftDown, 0); //Gives 0 V output to buzzer at left bottom corner
+
+delay(62); //Keeps the output voltage to the buzzers at 0 V for 0.062 s }
+
+}
+
+if((obstacleDistanceRight>0 & obstacleDistanceRight<0.5) & obstacleDistanceFront>4 & (obstacleDistanceBottom==height || obstacleDistanceBottom>(height+0.2)) & obstacleDistanceLeft>0.50) {
+
+if(obstacleDistanceRight>=0.25 & obstacleDistanceRight<0.5) {
+20
+//The code below is activated only when obstacleDistanceRight is greater than or equal to 0.25 m but less than 0.5 m analogWrite(buzzerRightUp, 128); //Gives 2.51 V output to buzzer at top right corner analogWrite(buzzerRightDown, 128); //Gives 2.51 V output to buzzer at right bottom corner delay(500); //Keeps the output voltage to the buzzers at 2.51 V for 0.5 s analogWrite(buzzerRightUp, 0); //Gives 0 V output to the buzzer at top right corner analogWrite(buzzerRightDown, 0); //Gives 0 V output to the buzzer at right bottom corner delay(500); //Keeps the output voltage to the buzzers at 0 V for 0.5 s
+
+}
+if(obstacleDistanceRight>=0 & obstacleDistanceRight<0.25) {
+
+//The code below is activated only when obstacleDistanceRight is greater than or equal to 0 m but less than 0.25 m analogWrite(buzzerRightUp, 153); //Gives 3 V output to buzzer at top right corner analogWrite(buzzerRightDown, 153); //Gives 3 V output to buzzer at right bottom corner delay(250); //Keeps the output voltage to the buzzers at 3 V for 0.25 s
+
+analogWrite(buzzerRightUp, 0); //Gives 0 V output to the buzzer at top right corner analogWrite(buzzerRightDown, 0); //Gives 0 V output to the buzzer at right bottom corner delay(250); //Keeps the output voltage to the buzzers at 0 V for 0.25 s
+
+} }
+
+if((obstacleDistanceLeft>0 & obstacleDistanceLeft<0.5) & obstacleDistanceFront>4 & (obstacleDistanceBottom==height || obstacleDistanceBottom>(height+0.2)) & obstacleDistanceRight>0.5) {
+
+if(obstacleDistanceLeft>=0.25 & obstacleDistanceLeft<0.5) {
+//The code below is activated only when obstacleDistanceLeft is greater than or equal to 0.25 m but less than 0.5 m analogWrite(buzzerLeftUp, 128); //Gives 2.51 V output to buzzer at top left corner analogWrite(buzzerLeftDown, 128); //Gives 2.51 V output to buzzer at left bottom corner delay(500); //Keeps the output voltage to the buzzers at 2.51 V for 0.5 s
+
+
+
+analogWrite(buzzerLeftUp, 0); //Gives 0 V output to the buzzer at top left corner analogWrite(buzzerLeftDown, 0); //Gives 0 V output to the buzzer at left bottom corner delay(500); //Keeps the output voltage to the buzzers at 0 V for 0.5 s
+
+}
+if(obstacleDistanceLeft>=0.25 & obstacleDistanceLeft<0.5) {
+21
+//The code below is activated only when obstacleDistanceLeft is greater than or equal to 0 m but less than 0.25 m analogWrite(buzzerLeftUp, 153); //Gives 3 V output to buzzer at top left corner analogWrite(buzzerLeftDown, 153); //Gives 3 V output to buzzer at left bottom corner
+delay(250); //Keeps the output voltage to the buzzers at 3 V for 0.25 s
+
+analogWrite(buzzerLeftUp, 0); //Gives 0 V output to the buzzer at top left corner analogWrite(buzzerLeftDown, 0); //Gives 0 V output to the buzzer at left bottom corner delay(250); //Keeps the output voltage to the buzzers at 0 V for 0.25 s
+
+} }
+
+if(((obstacleDistanceFront>0 &obstacleDistanceFront<4) & (obstacleDistanceLeft>0 & obstacleDistanceLeft<0.5) & obstacleDistanceRight>0.5) || (obstacleDistanceBottom>0 & (obstacleDistanceLeft>0 & obstacleDistanceLeft<0.5) & obstacleDistanceRight>0.5)) {
+
+if(obstacleDistanceFront>=2 & obstacleDistanceFront<4) {
+//The code below is activated only when obstacleDistanceFront is greater than or equal to 2 m but less than 4 m analogWrite(buzzerRightUp, 51); //Gives 1 V output to buzzer at top right corner
+
+delay(1000); //Keeps the output voltage to the buzzers at 1 V for 1 s analogWrite(buzzerRightUp, 0);
+//Gives 0 V output to buzzer at top right corner delay(1000); //Keeps the output voltage to the buzzers at 0 V for 1 s
+
+}
+if(obstacleDistanceFront>=1 & obstacleDistanceFront<2) {
+
+//The code below is activated only when obstacleDistanceFront is greater than or equal to 1 m but less than 2 m analogWrite(buzzerRightUp, 77); //Gives 1.51 V output to buzzer at top right corner delay(750); //Keeps the output voltage to the buzzers at 1.51 V for 0.75 s analogWrite(buzzerRightUp, 0); //Gives 0 V output to buzzer at top right corner
+
+delay(750); //Keeps the output voltage to the buzzers at 0 V for 0.75 s }
+if(obstacleDistanceFront>=0.5 & obstacleDistanceFront<1) {
+//The code below is activated only when obstacleDistanceFront is greater than or equal to 0.5 m but less than 1 m analogWrite(buzzerRightUp, 102); //Gives 2 V output to buzzer at top right corner delay(500); //Keeps the output voltage to the buzzers at 2 V for 0.5 s
+analogWrite(buzzerRightUp, 0); //Gives 0 V output to buzzer at top right corner delay(500); //Keeps the output voltage to the buzzers at 0 V for 0.5 s
+}											22
+
+if(obstacleDistanceFront>=0.25 & obstacleDistanceFront<0.5) {
+//The code below is activated only when obstacleDistanceFront is greater than or equal to 0.25 m but less than 0.5 m analogWrite(buzzerRightUp, 153); //Gives 3 V output to buzzer at top right corner delay(250); //Keeps the output voltage to the buzzers at 3 V for 0.25 s
+analogWrite(buzzerRightUp, 0); //Gives 0 V output to buzzer at top right corner delay(250); //Keeps the output voltage to the buzzers at 0 V for 0.25 s
+
+}
+if(obstacleDistanceFront>=0.125 & obstacleDistanceFront<0.25) {
+
+//The code below is activated only when obstacleDistanceFront is greater than or equal to 0.125 m but less than 0.25 m analogWrite(buzzerRightUp, 179); //Gives 3.51 V output to buzzer at top right corner
+delay(125); //Keeps the output voltage to the buzzers at 3.51 V for 0.125 s analogWrite(buzzerRightUp, 0); //Gives 0 V output to buzzer at top right corner
+delay(125); //Keeps the output voltage to the buzzers at 0 V for 0.125 s } if(obstacleDistanceFront>=0 & obstacleDistanceFront<0.125) {
+//The code below is activated only when obstacleDistanceFront is greater than or equal to 0.125 m
+but less than 0.25 m analogWrite(buzzerRightUp, 204); //Gives 4 V output to buzzer at top right corner
+delay(62); //Keeps the output voltage to the buzzers at 4 V for 0.062 s analogWrite(buzzerRightUp, 0); //Gives 0 V output to buzzer at top right corner delay(62); //Keeps the output voltage to the buzzers at 0 V for 0.062 s
+
+} if(obstacleDistanceBottom<=height) {
+
+//The code below is activated only when obstacleDistanceBottom is less than or equal to height criteria of the user analogWrite(buzzerRightDown, 179); //Gives 3.51 V output to buzzer at right bottom corner
+delay(125); //Keeps the output voltage to the buzzers at 3.51 V for 0.125 s analogWrite(buzzerRightDown, 0); //Gives 0 V output to buzzer at right bottom corner
+
+delay(125); //Keeps the output voltage to the buzzers at 0 V for 0.125 s }
+
+if(obstacleDistanceBottom>(height+0.1)) {
+//The code below is activated only when obstacleDistanceBottom is less than or equal to height criteria + 0.1 of the user analogWrite(buzzerRightDown, 204); 
+23
+//Gives 4 V output to buzzer at right bottom corner
+delay(62); //Keeps the output voltage to the buzzers at 4 V for 0.062 s analogWrite(buzzerRightDown, 0); //Gives 0 V output to buzzer at right bottom corner
+delay(62); //Keeps the output voltage to the buzzers at 0 V for 0.062 s } if(obstacleDistanceLeft>=0.25 & obstacleDistanceLeft<0.5) {
+//The code below is activated only when obstacleDistanceLeft is greater than or equal to 0.25 m but
+less than 0.5 m analogWrite(buzzerLeftUp, 128); //Gives 2.51 V output to buzzer at top left corner delay(500); //Keeps the output voltage to the buzzers at 2.51 V for 0.5 s analogWrite(buzzerLeftUp, 0); //Gives 0 V output to the buzzer at top left corner
+delay(500); //Keeps the output voltage to the buzzers at 0 V for 0.5 s
+
+}
+if(obstacleDistanceLeft>=0.25 & obstacleDistanceLeft<0.5) {
+
+//The code below is activated only when obstacleDistanceLeft is greater than or equal to 0 m but less than 0.25 m analogWrite(buzzerLeftUp, 153); //Gives 3 V output to buzzer at top left corner delay(250); //Keeps the output voltage to the buzzers at 3 V for 0.25 s
+analogWrite(buzzerLeftUp, 0); //Gives 0 V output to the buzzer at top left corner delay(250); //Keeps the output voltage to the buzzers at 0 V for 0.25 s }
+}
+
+if((obstacleDistanceFront>0 & obstacleDistanceLeft>0.5 & (obstacleDistanceRight>0 & obstacleDistanceRight<0.5)) || (obstacleDistanceBottom>0 & obstacleDistanceLeft>0.5 & (obstacleDistanceRight>0 & obstacleDistanceRight<0.5))) {
+
+if(obstacleDistanceFront>=2 & obstacleDistanceFront<4) {
+//The code below is activated only when obstacleDistanceFront is greater than or equal to 2 m but less than 4 m analogWrite(buzzerLeftUp, 51); //Gives 1 V output to buzzer at top left corner delay(1000); //Keeps the output voltage to the buzzers at 1 V for 1 s
+analogWrite(buzzerLeftUp, 0); //Gives 0 V output to buzzer at top left corner delay(1000); //Keeps the output voltage to the buzzers at 0 V for 1 s
+
+}
+24
+if(obstacleDistanceFront>=1 & obstacleDistanceFront<2) {
+
+//The code below is activated only when obstacleDistanceFront is greater than or equal to 1 m but less than 2 m analogWrite(buzzerLeftUp, 77); //Gives 1.51 V output to buzzer at top left corner delay(750); //Keeps the output voltage to the buzzers at 1.51 V for 0.75 s analogWrite(buzzerLeftUp, 0); //Gives 0 V output to buzzer at top left corner
+
+delay(750); //Keeps the output voltage to the buzzers at 0 V for 0.75 s }
+
+if(obstacleDistanceFront>=0.5 & obstacleDistanceFront<1) {
+//The code below is activated only when obstacleDistanceFront is greater than or equal to 0.5 m but less than 1 m analogWrite(buzzerLeftUp, 102); //Gives 2 V output to buzzer at top left corner delay(500); //Keeps the output voltage to the buzzers at 2 V for 0.5 s
+analogWrite(buzzerLeftUp, 0); //Gives 0 V output to buzzer at top left corner delay(500); //Keeps the output voltage to the buzzers at 0 V for 0.5 s
+}
+
+if(obstacleDistanceFront>=0.25 & obstacleDistanceFront<0.5) {
+//The code below is activated only when obstacleDistanceFront is greater than or equal to 0.25 m but less than 0.5 m analogWrite(buzzerLeftUp, 153); //Gives 3 V output to buzzer at top left corner delay(250); //Keeps the output voltage to the buzzers at 3 V for 0.25 s
+analogWrite(buzzerLeftUp, 0); //Gives 0 V output to buzzer at top left corner delay(250); //Keeps the output voltage to the buzzers at 0 V for 0.25 s
+
+}
+if(obstacleDistanceFront>=0.125 & obstacleDistanceFront<0.25) {
+
+//The code below is activated only when obstacleDistanceFront is greater than or equal to 0.125 m but less than 0.25 m analogWrite(buzzerLeftUp, 179); //Gives 3.51 V output to buzzer at top left corner
+delay(125); //Keeps the output voltage to the buzzers at 3.51 V for 0.125 s analogWrite(buzzerLeftUp, 0); //Gives 0 V output to buzzer at top left corner delay(125); //Keeps the output voltage to the buzzers at 0 V for 0.125 s }
+if(obstacleDistanceFront>=0 & obstacleDistanceFront<0.125) {
+//The code below is activated only when obstacleDistanceFront is greater than or equal to 0.125 m but less than 0.25 m analogWrite(buzzerLeftUp, 204); //Gives 4 V output to buzzer at top left corner delay(62); //Keeps the output voltage to the 
+25
+buzzers at 4 V for 0.062 s
+analogWrite(buzzerLeftUp, 0); //Gives 0 V output to buzzer at top left corner delay(62); //Keeps the output voltage to the buzzers at 0 V for 0.062 s
+
+} if(obstacleDistanceBottom<=height) {
+
+//The code below is activated only when obstacleDistanceBottom is less than or equal to height criteria of the user analogWrite(buzzerLeftDown, 179); //Gives 3.51 V output to buzzer at left bottom corner
+delay(125); //Keeps the output voltage to the buzzers at 3.51 V for 0.125 s analogWrite(buzzerLeftDown, 0); //Gives 0 V output to buzzer at left bottom corner
+
+delay(125); //Keeps the output voltage to the buzzers at 0 V for 0.125 s } if(obstacleDistanceBottom>(height+0.1)) {
+//The code below is activated only when obstacleDistanceBottom is less than or equal to height criteria + 0.1 of the user analogWrite(buzzerLeftDown, 204); //Gives 4 V output to buzzer at left bottom corner
+
+
+delay(62); //Keeps the output voltage to the buzzers at 4 V for 0.062 s analogWrite(buzzerLeftDown, 0); //Gives 0 V output to buzzer at left bottom corner delay(62); //Keeps the output voltage to the buzzers at 0 V for 0.062 s
+
+}
+if(obstacleDistanceRight>=0.25 & obstacleDistanceRight<0.5) {
+
+//The code below is activated only when obstacleDistanceRight is greater than or equal to 0.25 m but less than 0.5 m analogWrite(buzzerRightDown, 128); //Gives 2.51 V output to buzzer at right bottom corner
+delay(500); //Keeps the output voltage to the buzzers at 2.51 V for 0.5 s analogWrite(buzzerRightDown, 0); //Gives 0 V output to the buzzer at right bottom corner
+delay(500); //Keeps the output voltage to the buzzers at 0 V for 0.5 s } if(obstacleDistanceRight>=0 & obstacleDistanceRight<0.25) {
+//The code below is activated only when obstacleDistanceRight is greater than or equal to 0 m but
+less than 0.25 m analogWrite(buzzerRightDown, 153); //Gives 3 V output to buzzer 
+26
+at right bottom corner
+delay(250); //Keeps the output voltage to the buzzers at 3 V for 0.25 s analogWrite(buzzerRightDown, 0); //Gives 0 V output to the buzzer at right bottom corner delay(250); //Keeps the output voltage to the buzzers at 0 V for 0.25 s
+
+} }
+
+if((obstacleDistanceRight>0 & obstacleDistanceRight<0.5) & (obstacleDistanceFront>0 & obstacleDistanceFront<4) & (obstacleDistanceLeft>0 & obstacleDistanceLeft<0.5)) {
+
+if(obstacleDistanceFront>=2 & obstacleDistanceFront<4) {
+//The code below is activated only when obstacleDistanceFront is greater than or equal to 2 m but less than 4 m analogWrite(buzzerRightUp, 51); //Gives 1 V output to buzzer at top right corner delay(1000); //Keeps the output voltage to the buzzers at 1 V for 1 s
+analogWrite(buzzerRightUp, 0); //Gives 0 V output to buzzer at top right corner delay(1000); //Keeps the output voltage to the buzzers at 0 V for 1 s
+
+}
+if(obstacleDistanceFront>=1 & obstacleDistanceFront<2) {
+
+//The code below is activated only when obstacleDistanceFront is greater than or equal to 1 m but less than 2 m analogWrite(buzzerRightUp, 77); //Gives 1.51 V output to buzzer at top right corner
+
+delay(750); //Keeps the output voltage to the buzzers at 1.51 V for 0.75 s analogWrite(buzzerRightUp, 0); //Gives 0 V output to buzzer at top right corner delay(750); //Keeps the output voltage to the buzzers at 0 V for 0.75 s
+
+}
+if(obstacleDistanceFront>=0.5 & obstacleDistanceFront<1) {
+
+//The code below is activated only when obstacleDistanceFront is greater than or equal to 0.5 m but less than 1 m analogWrite(buzzerRightUp, 102); //Gives 2 V output to buzzer at top right corner delay(500); //Keeps the output voltage to the buzzers at 2 V for 0.5 s
+analogWrite(buzzerRightUp, 0); //Gives 0 V output to buzzer at top right corner delay(500); //Keeps the output voltage to the buzzers at 0 V for 0.5 s
+}
+if(obstacleDistanceFront>=0.25 & obstacleDistanceFront<0.5) {
+
+27
+//The code below is activated only when obstacleDistanceFront is greater than or equal to 0.25 m but less than 0.5 m analogWrite(buzzerRightUp, 153); //Gives 3 V output to buzzer at top right corner delay(250); //Keeps the output voltage to the buzzers at 3 V for 0.25 s
+analogWrite(buzzerRightUp, 0); //Gives 0 V output to buzzer at top right corner delay(250); //Keeps the output voltage to the buzzers at 0 V for 0.25 s }
+if(obstacleDistanceFront>=0.125 & obstacleDistanceFront<0.25) {
+//The code below is activated only when obstacleDistanceFront is greater than or equal to 0.125 m but less than 0.25 m analogWrite(buzzerRightUp, 179); //Gives 3.51 V output to buzzer at top right corner
+delay(125); //Keeps the output voltage to the buzzers at 3.51 V for 0.125 s analogWrite(buzzerRightUp, 0); //Gives 0 V output to buzzer at top right corner delay(125); //Keeps the output voltage to the buzzers at 0 V for 0.125 s
+
+}
+if(obstacleDistanceFront>=0 & obstacleDistanceFront<0.125) {
+
+//The code below is activated only when obstacleDistanceFront is greater than or equal to 0.125 m but less than 0.25 m analogWrite(buzzerRightUp, 204); //Gives 4 V output to buzzer at top right corner
+delay(62); //Keeps the output voltage to the buzzers at 4 V for 0.062 s analogWrite(buzzerRightUp, 0); //Gives 0 V output to buzzer at top right corner
+
+delay(62); //Keeps the output voltage to the buzzers at 0 V for 0.062 s }
+if(obstacleDistanceBottom<=height) {
+//The code below is activated only when obstacleDistanceBottom is less than or equal to height criteria of the user analogWrite(buzzerLeftDown, 179); //Gives 3.51 V output to buzzer at left bottom corner
+
+
+delay(125); //Keeps the output voltage to the buzzers at 3.51 V for 0.125 s analogWrite(buzzerLeftDown, 0); //Gives 0 V output to buzzer at left bottom corner delay(125); //Keeps the output voltage to the buzzers at 0 V for 0.125 s
+
+} if(obstacleDistanceBottom>(height+0.1)) {
+
+//The code below is activated only when obstacleDistanceBottom is less than or equal to height criteria + 0.1 of the user analogWrite(buzzerLeftDown, 204); //Gives 4 V output to buzzer at left bottom corner
+delay(62); //Keeps the output voltage to the buzzers at 4 V for 0.062 s analogWrite(buzzerLeftDown, 0); //Gives 0 V output to buzzer at left bottom corner										     28
+delay(62); //Keeps the output voltage to the buzzers at 0 V for 0.062 s } if(obstacleDistanceRight>=0.25 & obstacleDistanceRight<0.5) {
+//The code below is activated only when obstacleDistanceRight is greater than or equal to 0.25 m but
+less than 0.5 m analogWrite(buzzerRightDown, 128); //Gives 2.51 V output to buzzer at right bottom corner
+delay(500); //Keeps the output voltage to the buzzers at 2.51 V for 0.5 s analogWrite(buzzerRightDown, 0); //Gives 0 V output to the buzzer at right bottom corner
+delay(500); //Keeps the output voltage to the buzzers at 0 V for 0.5 s } if(obstacleDistanceRight>=0 & obstacleDistanceRight<0.25) {
+//The code below is activated only when obstacleDistanceRight is greater than or equal to 0 m but
+less than 0.25 m analogWrite(buzzerRightDown, 153); //Gives 3 V output to buzzer at right bottom corner
+delay(250); //Keeps the output voltage to the buzzers at 3 V for 0.25 s analogWrite(buzzerRightDown, 0); //Gives 0 V output to the buzzer at right bottom corner delay(250); //Keeps the output voltage to the buzzers at 0 V for 0.25 s
+
+}
+if(obstacleDistanceLeft>=0.25 & obstacleDistanceLeft<0.5) {
+
+//The code below is activated only when obstacleDistanceLeft is greater than or equal to 0.25 m but less than 0.5 m analogWrite(buzzerLeftUp, 128); //Gives 2.51 V output to buzzer at top left corner delay(500); //Keeps the output voltage to the buzzers at 2.51 V for 0.5 s analogWrite(buzzerLeftUp, 0); //Gives 0 V output to the buzzer at top left corner
+
+delay(500); //Keeps the output voltage to the buzzers at 0 V for 0.5 s }
+if(obstacleDistanceLeft>=0.25 & obstacleDistanceLeft<0.5) {
+//The code below is activated only when obstacleDistanceLeft is greater than or equal to 0 m but less than 0.25 m analogWrite(buzzerLeftUp, 153); //Gives 3 V output to buzzer at top left corner delay(250); //Keeps the output voltage to the buzzers at 3 V for 0.25 s
+analogWrite(buzzerLeftUp, 0); //Gives 0 V output to the buzzer at top left corner delay(250); //Keeps the output voltage to the buzzers at 0 V for 0.25 s
+
+} }
+29
+}
+if(digitalRead(crowdModeButton)==1 & digitalRead(talkModeButton)==0) {
+
+//The code is activated only if crowdModeButton is high or at 5 V but talkModeButton is grounded or at 0 V
+
+if(obstacleDistanceFront>0 & (obstacleDistanceBottom==height || obstacleDistanceBottom>(height+0.2)) & obstacleDistanceRight>0.5 & obstacleDistanceLeft>0.5) {
+
+if(obstacleDistanceFront>=0 & obstacleDistanceFront<0.15) {
+//The code below is activated only when obstacleDistanceFront is greater than or equal to 0 m but less than 0.15 m analogWrite(buzzerRightUp, 153); //Gives 3 V output to buzzer at top right corner analogWrite(buzzerLeftUp, 153); //Gives 3 V output to buzzer at top left corner
+delay(1000); //Keeps the output voltage to the buzzers at 3 V for 1 s analogWrite(buzzerRightUp, 0); //Gives 0 V output to buzzer at top right corner analogWrite(buzzerLeftUp, 0); //Gives 0 V output to buzzer at top left corner delay(1000); //Keeps the output voltage to the buzzers at 0 V for 1 s
+
+} }
+
+if(((obstacleDistanceBottom>0 & obstacleDistanceBottom<height) || (obstacleDistanceBottom>(height+0.1) & obstacleDistanceBottom<(height+0.2))) & obstacleDistanceFront>4 & obstacleDistanceRight>0.5 & obstacleDistanceLeft>0.5) {
+
+if(obstacleDistanceBottom<=0.15) {
+//The code below is activated only when obstacleDistanceBottom is less than or equal to 0.15m analogWrite(buzzerRightDown, 179); //Gives 3.51 V output to buzzer at right bottom corner analogWrite(buzzerLeftDown, 179); //Gives 3.51 V output to buzzer at left bottom corner delay(1000); //Keeps the output voltage to the buzzers at 3.51 V for 1 s analogWrite(buzzerRightDown, 0); //Gives 0 V output to buzzer at right bottom corner analogWrite(buzzerLeftDown, 0); //Gives 0 V output to buzzer at left bottom corner delay(1000); // Keeps the output voltage to the buzzers at 0 V for 1 s
+
+} if(obstacleDistanceBottom>(height+0.1)) {
+
+//The code below is activated only when obstacleDistanceBottom is less than or equal to height criteria + 0.1 of the user analogWrite(buzzerRightDown, 204); //Gives 4 V output to buzzer at right bottom corner
+analogWrite(buzzerLeftDown, 204); //Gives 4 V output to buzzer at left bottom corner delay(500); //Keeps the output voltage to the buzzers at 4 V for 0.5 s
+
+analogWrite(buzzerRightDown, 0); //Gives 0 V output to buzzer at right bottom 
+30
+corner analogWrite(buzzerLeftDown, 0); //Gives 0 V output to buzzer at left bottom corner delay(500); // Keeps the output voltage to the buzzers at 0 V for 0.5 s
+
+} }
+
+if((obstacleDistanceRight>0 & obstacleDistanceRight<0.5) & obstacleDistanceFront>4 & (obstacleDistanceBottom==height || obstacleDistanceBottom>(height+0.2)) & obstacleDistanceLeft>0.5) {
+
+if(obstacleDistanceRight>=0 & obstacleDistanceRight<0.10) {
+//The code below is activated only when obstacleDistanceRight is greater than or equal to 0 m but less than 0.10 m analogWrite(buzzerRightUp, 153); //Gives 3 V output to buzzer at top right corner analogWrite(buzzerRightDown, 153); //Gives 3 V output to buzzer at right bottom corner delay(1000); //Keeps the output voltage to the buzzers at 3 V for 1 s
+analogWrite(buzzerRightUp, 0); //Gives 0 V output to the buzzer at top right corner analogWrite(buzzerRightDown, 0); //Gives 0 V output to the buzzer at right bottom corner delay(1000); //Keeps the output voltage to the buzzers at 0 V for 1 s
+
+} }
+
+if((obstacleDistanceLeft>0 & obstacleDistanceLeft<0.5) & obstacleDistanceFront>4 & obstacleDistanceBottom>0.5 & obstacleDistanceRight>0.5) {
+
+if(obstacleDistanceLeft>=0 & obstacleDistanceLeft<0.10) {
+//The code below is activated only when obstacleDistanceLeft is greater than or equal to 0 m but less than 0.10 m analogWrite(buzzerLeftUp, 153); //Gives 3 V output to buzzer at top left corner analogWrite(buzzerLeftDown, 153); //Gives 3 V output to buzzer at left bottom corner
+delay(1000); //Keeps the output voltage to the buzzers at 3 V for 1 s analogWrite(buzzerLeftUp, 0); //Gives 0 V output to the buzzer at top left corner analogWrite(buzzerLeftDown, 0); //Gives 0 V output to the buzzer at left bottom corner delay(1000); //Keeps the output voltage to the buzzers at 0 V for 1 s
+
+} }
+
+if((obstacleDistanceFront>0 & (obstacleDistanceLeft>0 & obstacleDistanceLeft<0.5) & obstacleDistanceRight==0) || (obstacleDistanceBottom>0 & (obstacleDistanceLeft>0 & obstacleDistanceLeft<0.5) & obstacleDistanceRight==0)) {
+
+if(obstacleDistanceFront>=0 & obstacleDistanceFront<0.15) {
+//The code below is activated only when obstacleDistanceFront is greater than or equal to 0 m but less than 0.1 5 m analogWrite(buzzerRightUp, 153); //Gives 3 V output to buzzer at top right corner delay(1000); //Keeps the output voltage to the buzzers at 3 V for 1 s								           31
+analogWrite(buzzerRightUp, 0); //Gives 0 V output to buzzer at top right corner delay(1000); //Keeps the output voltage to the buzzers at 0 V for 1 s
+} if(obstacleDistanceBottom<=0.15) {
+
+//The code below is activated only when obstacleDistanceBottom is less than or equal to 0.15 m analogWrite(buzzerRightDown, 179); //Gives 3.51 V output to buzzer at right bottom corner delay(1000); //Keeps the output voltage to the buzzers at 3.51 V for 1 s analogWrite(buzzerRightDown, 0); //Gives 0 V output to buzzer at right bottom corner delay(1000); //Keeps the output voltage to the buzzers at 0 V for 1 s
+
+} if(obstacleDistanceBottom>(height+20)) {
+
+//The code below is activated only when obstacleDistanceBottom is less than or equal to height criteria + 20 of the user
+
+analogWrite(buzzerRightDown, 204); //Gives 4 V output to buzzer at right bottom corner delay(500); //Keeps the output voltage to the buzzers at 4 V for 0.5 s analogWrite(buzzerRightDown, 0); //Gives 0 V output to buzzer at right bottom corner delay(500); //Keeps the output voltage to the buzzers at 0 V for 0.5 s
+
+}
+if(obstacleDistanceLeft>=0 & obstacleDistanceLeft<0.15) {
+
+//The code below is activated only when obstacleDistanceLeft is greater than or equal to 0 m but less than 0.15 m analogWrite(buzzerLeftUp, 153); //Gives 3 V output to buzzer at top left corner delay(1000); //Keeps the output voltage to the buzzers at 3 V for 1 s
+analogWrite(buzzerLeftUp, 0); //Gives 0 V output to the buzzer at top left corner delay(1000); //Keeps the output voltage to the buzzers at 0 V for 1 s }
+}
+
+if((obstacleDistanceFront>0 & obstacleDistanceLeft>0.5 & (obstacleDistanceRight>0 & obstacleDistanceRight<0.5)) || (obstacleDistanceBottom>0 & obstacleDistanceLeft>0.5 & (obstacleDistanceRight>0 & obstacleDistanceRight<0.5))) {
+
+if(obstacleDistanceFront>=0 & obstacleDistanceFront<0.15) {
+//The code below is activated only when obstacleDistanceFront is greater than or equal to 0 m but less than 0.15 m analogWrite(buzzerLeftUp, 153); //Gives 3 V output to buzzer at top left corner delay(1000); //Keeps the output voltage to the buzzers at 3 V for 1 s
+analogWrite(buzzerLeftUp, 0); //Gives 0 V output to buzzer at top left 
+              32
+corner delay(1000); //Keeps the output voltage to the buzzers at 0 V for 1s
+} if(obstacleDistanceBottom<=0.15) {
+
+//The code below is activated only when obstacleDistanceBottom is less than or equal to 0.15 m analogWrite(buzzerLeftDown, 179); //Gives 3.51 V output to buzzer at left bottom corner delay(1000); //Keeps the output voltage to the buzzers at 3.51 V for 1 s analogWrite(buzzerLeftDown, 0); //Gives 0 V output to buzzer at left bottom corner delay(1000); // Keeps the output voltage to the buzzers at 0 V for 1 s
+} if(obstacleDistanceBottom>(height+20)) {
+
+//The code below is activated only when obstacleDistanceBottom is less than or equal to height criteria + 20 of the user analogWrite(buzzerLeftDown, 204); //Gives 4 V output to buzzer at left bottom corner
+delay(500); //Keeps the output voltage to the buzzers at 4 V for 0.5 s analogWrite(buzzerLeftDown, 0); //Gives 0 V output to buzzer at left bottom corner
+delay(500); //Keeps the output voltage to the buzzers at 0 V for 0.5 s } if(obstacleDistanceRight>=0 & obstacleDistanceRight<0.15) {
+//The code below is activated only when obstacleDistanceRight is greater than or equal to 0 m but
+less than 0.15 m analogWrite(buzzerRightDown, 153); //Gives 3 V output to buzzer at right bottom corner
+delay(1000); //Keeps the output voltage to the buzzers at 3 V for 1 s analogWrite(buzzerRightDown, 0); //Gives 0 V output to the buzzer at right bottom corner delay(1000); //Keeps the output voltage to the buzzers at 0 V for 1 s
+
+} }
+
+if((obstacleDistanceRight>0 & obstacleDistanceRight<0.5) & obstacleDistanceFront>0 & (obstacleDistanceLeft>0 & obstacleDistanceLeft<0.5)) {
+
+if(obstacleDistanceFront>=0 & obstacleDistanceFront<0.15) {
+//The code below is activated only when obstacleDistanceFront is greater than or equal to 0 m but less than 0.15 m analogWrite(buzzerRightUp, 153); //Gives 3 V output to buzzer at top right corner delay(1000); //Keeps the output voltage to the buzzers at 3 V for 1 s
+analogWrite(buzzerRightUp, 0); //Gives 0 V output to buzzer at top right 
+  33
+corner delay(1000); //Keeps the output voltage to the buzzers at 0 V for 1 s } if(obstacleDistanceBottom<=0.15) {
+//The code below is activated only when obstacleDistanceBottom is less than or equal to 0.15 m
+analogWrite(buzzerLeftDown, 179); //Gives 3.51 V output to buzzer at left bottom corner delay(1000); //Keeps the output voltage to the buzzers at 3.51 V for 1 s analogWrite(buzzerLeftDown, 0); //Gives 0 V output to buzzer at left bottom corner delay(1000); // Keeps the output voltage to the buzzers at 0 V for 1 s
+
+} if(obstacleDistanceBottom>(height+20)) {
+
+//The code below is activated only when obstacleDistanceBottom is less than or equal to height criteria + 20 of the user analogWrite(buzzerLeftDown, 204); //Gives 4 V output to buzzer at left bottom corner
+delay(500); //Keeps the output voltage to the buzzers at 4 V for 0.5 s analogWrite(buzzerLeftDown, 0); //Gives 0 V output to buzzer at left bottom corner
+
+delay(500); //Keeps the output voltage to the buzzers at 0 V for 0.5 s }
+if(obstacleDistanceRight>=0 & obstacleDistanceRight<0.15) {
+//The code below is activated only when obstacleDistanceRight is greater than or equal to 0 m but less than 0.15 m analogWrite(buzzerRightDown, 153); //Gives 3 V output to buzzer at right bottom corner
+delay(1000); //Keeps the output voltage to the buzzers at 3 V for 1 s analogWrite(buzzerRightDown, 0); //Gives 0 V output to the buzzer at right bottom corner delay(1000); //Keeps the output voltage to the buzzers at 0 V for 1 s
+
+}
+if(obstacleDistanceLeft>=0 & obstacleDistanceLeft<0.15) {
+
+//The code below is activated only when obstacleDistanceLeft is greater than or equal to 0 m but less than 0.15 m analogWrite(buzzerLeftUp, 153); //Gives 3 V output to buzzer at top left corner delay(1000); //Keeps the output voltage to the buzzers at 3 V for 1 s
+analogWrite(buzzerLeftUp, 0); //Gives 0 V output to the buzzer at top left corner delay(1000); //Keeps the output voltage to the buzzers at 0 V for 1 s }
+} }
+
+if(digitalRead(talkModeButton)==1) {
+analogWrite(buzzerLeftDown, 153); //Gives 3 V output to buzzer at left bottom corner analogWrite(buzzerLeftUp, 153); //Gives 3 V output to buzzer at top left 
+34
+corner analogWrite(buzzerRightDown, 153); //Gives 3 V output to buzzer at right bottom corner analogWrite(buzzerRightUp, 153); //Gives 3 V output to buzzer at top right corner delay(1000); // Keeps all buzzers ON for 1 s
+analogWrite(buzzerLeftDown, 0); //Gives 0 V output to buzzer at left bottom corner analogWrite(buzzerLeftUp, 0); //Gives 0 V output to buzzer at top left corner analogWrite(buzzerRightDown, 0); //Gives 0 V output to buzzer at right bottom corner analogWrite(buzzerRightUp, 0); //Gives 0 V output to buzzer at top right corner delay(60000); // Keeps all buzzers OFF for 60 s
+} else {
+
+analogWrite(buzzerLeftDown, 0); //Gives 0 V output to buzzer at left bottom corner analogWrite(buzzerLeftUp, 0); //Gives 0 V output to buzzer at top left corner analogWrite(buzzerRightDown, 0); //Gives 0 V output to buzzer at right bottom corner analogWrite(buzzerRightUp, 0); //Gives 0 V output to buzzer at top right corner
+
+} }
